@@ -1,0 +1,12 @@
+#to be installed on Ubuntu
+#FTP: creates ftp user w/ default dir /srv/ftp
+#https://ubuntu.com/server/docs/service-ftp
+- hosts: 172.16.1.8
+	tasks: 
+	- name: Configure FTP server
+	become: yes 
+	apt: 
+		install vsftpd
+	shell:
+		systemctl restart vsftpd.service 
+	
