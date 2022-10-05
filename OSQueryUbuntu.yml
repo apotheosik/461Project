@@ -1,0 +1,14 @@
+#Chris Sequeira
+#push OSQuery to Ubuntu Ansible. run with -K to send root password
+- name: Install OSQuery [Ubuntu]
+  hosts: linux
+  become: yes
+
+  tasks:
+  - name: Install osquery
+    ansible.builtin.shell: |
+      echo "deb [arch=amd64] https://pkg.osquery.io/deb deb main" | tee /etc/apt/sources.list.d/osquery.list
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
+      apt-get update
+      apt-get install osquery
+#osqueryi

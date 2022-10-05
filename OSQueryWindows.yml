@@ -1,0 +1,19 @@
+#Chris Sequeira
+#try ansible-lint OSQueryWindows.yml
+#push OSQuery to Windows Ansible
+- name: Install OSQuery [Windows]
+  hosts: windows
+
+  tasks:
+  - name: Chocolatey OSQuery [Windows]
+    win_chocolatey:
+      name: osquery
+      state: present
+  - name: Configure OSquery [Windows]
+    windows.shell: |
+      Set-ExecutionPolicy Bypass -Scope Process -Force; iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex
+      choco install osquery --force -y
+      Rename-Item -Path C:\Program Files\osquery\osquery.example.conf -NewName C:\Program Files\osquery\osquery.conf
+      wevtutil im C:\Program Files\osquery\osquery.man
+      Start-Service osqueryd
+      #cmd: osqueryi.exe

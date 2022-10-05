@@ -1,0 +1,38 @@
+#Chris Sequera
+#Ansible Lab
+#https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html
+---
+- name: Install OSQuery [Windows]
+  hosts: WinClient, WinServ
+  remote_user: Administrator
+
+#TODO: T E S T
+#Source: https://mcsaguru.com/install-chocolatey-using-powershell/
+#Source: https://osquery.readthedocs.io/en/stable/installation/install-windows/
+  tasks:
+  - name: install chocolatey
+    ansible.windows.win_powershell:
+      script: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force; iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex
+      script: |
+        choco install osquery
+      script: |
+        Rename-Item -Path C:\Program Files\osquery\osquery.example.conf -NewName C:\Program Files\osquery\osquery.conf
+#TODO Ensure wevutil works in PS, not just cmd
+#enable windows event log support - check for osquery in Event Viewer.exe Apps and Service Logs/FB/osquery
+      script: |
+        wevtutil im C:\Program Files\osquery\osquery.man
+#Start-Service osqueryd || osqueryi
+
+#ansible-playbook --ask-become-pass ~/install_packages/site.yml
+-hosts: AnsibleServ, AnsibleClient
+  tasks:
+    - name: install OSQuery [Debian]
+    become: true
+    become_user: root
+    ansible.builtin.shell: export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $OSQUERY_KEY$ sudo add-apt-repository 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'$ sudo apt-get update
+    apt:
+      state: present
+      name:
+        - osquery
+#osqueryi || sudo systemctl start osqueryd
